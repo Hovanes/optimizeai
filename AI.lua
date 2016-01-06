@@ -6,6 +6,7 @@ MIRAI_VER = 122
 require "./AI/USER_AI/Const.lua"
 require "./AI/USER_AI/Util.lua"
 require "./AI/USER_AI/Config.lua" -- configuration file
+require "./AI/USER_AI/NConfig.lua" -- configuration file
 require "./AI/USER_AI/PassiveDB.lua"
 require "./AI/USER_AI/Patrol.lua"
 require "./AI/USER_AI/SelectedMod.lua" -- 3rd party changes
@@ -1077,6 +1078,17 @@ function GetMyNextTarget(HomunHPPerc)
 		end
 	end
 	if object == 0 then
+		for i,v in Gang do
+			object = GetEnemyOf(v)
+			if GetV(V_MOTION, object) == MOTION_DEAD then
+				object = 0
+			end
+			if object ~= 0 then
+				break
+			end
+		end
+	end
+	if object == 0 then
 		for i,v in Friends do
 			object = GetEnemyOf(v)
 			if GetV(V_MOTION, object) == MOTION_DEAD then
@@ -1110,6 +1122,17 @@ function GetMyNextTarget(HomunHPPerc)
 	object = GetV(V_TARGET, OwnerID)
 	if (object ~= 0) and (OwnerMotion == MOTION_ATTACK or OwnerMotion == MOTION_ATTACK2) then
 	   CooTarget = object
+	end
+	if CooTarget == 0 then -- Owner is not attacking. Maybe a friend?
+		local FriendMotion = 0
+		for i,v in Gang do
+			object = GetV(V_TARGET, v)
+			FriendMotion = GetV(V_MOTION, v)
+			if (object ~= 0) and (FriendMotion == MOTION_ATTACK or FriendMotion == MOTION_ATTACK2) then
+				CooTarget = object
+				break
+			end
+		end
 	end
 	if CooTarget == 0 then -- Owner is not attacking. Maybe a friend?
 		local FriendMotion = 0
@@ -1242,7 +1265,7 @@ function isKS()
 	local mob_target = GetV(V_TARGET, MyEnemy)
 	if mob_target > 0 then
 		if not IsMonster2(mob_target) then
-			if (mob_target == MyID) or (mob_target == OwnerID) or (Friends[mob_target] ~= nil) then
+			if (mob_target == MyID) or (mob_target == OwnerID) or (Friends[mob_target] ~= nil) or Gang[mob_target] ~= nil then
 				return false
 			else
 				Log("MyEnemy was already in battle, action aborted (anti-KS)")
@@ -1829,6 +1852,12 @@ function AI(myid)
 		end
 		--FriendList_Clear()
 		FriendList_Load()
+		if GANG_MODE_ENABLED == true then
+			GangList_Load()
+			if LOG_GANG_IDS == true then
+				GangList_Update(OwnerId,MyID)
+			end
+		end
 		stdMove = Move; Move = limMove -- replace Move with the protected version
 		StartupTime = GetTick()
 		IdleStartTime = StartupTime

@@ -1,0 +1,2 @@
+GANG_MODE_ENABLED = true
+LOG_GANG_IDS = true

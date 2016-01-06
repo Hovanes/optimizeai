@@ -64,7 +64,9 @@ end
 -- ### Friends ###################################
 --------------------------------------------------
 Friends = {}
+Gang = {}
 FRIENDLIST_FILE = "AI/USER_AI/Friends.txt"
+GANGLIST_FILE = "AI/USER_AI/Gang.txt"
 
 --------------------------------------------------
 function FriendList_Clear()
@@ -91,6 +93,48 @@ function FriendList_Load()
 		TraceAI("Cannot load friend list")
 	end
 end
+
+--------------------------------------------------
+function GangList_Load()
+--------------------------------------------------
+    local f_in = io.open(GANGLIST_FILE, "r")
+
+    if f_in ~= nil then
+        local ln = f_in:read()
+        while ln ~= nil do
+            Gang[ln] = tonumber(ln)
+            ln = f_in:read()
+        end
+        TraceAI("Gang list loaded")
+    else
+        TraceAI("Cannot load friend list")
+    end
+
+    f_in:close()
+end
+
+
+--------------------------------------------------
+function GangList_Update(OwnerID, MyID)
+--------------------------------------------------
+    if OwnerID == nil then
+        OwnerID = GetV(V_OWNER, MyID)
+    end
+    Gang[MyID] = tonumber(MyID)
+    Gang[OwnerID] = tonumber(OwnerID)
+
+    local f_in = io.open(GANGLIST_FILE, "w")
+    if f_in ~= nil then
+        for i,v in Gang do
+            f_in:write(v .. "\n")
+        end
+        TraceAI("Gang list has been saved")
+    else
+        TraceAI("Cannot save gang list")
+    end
+    f_in:close()
+end
+
 
 --------------------------------------------------
 function FriendList_Save()
