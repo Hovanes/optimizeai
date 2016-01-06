@@ -6,6 +6,7 @@ FOLLOW_AT_ONCE=1
 HELP_OWNER_1ST=true
 KILL_YOUR_ENEMIES_1ST=false
 LONG_RANGE_SHOOTER=false
+-- Not used anymore
 BOLTS_ON_CHASE_ST=false
 HP_PERC_DANGER=0
 HP_PERC_SAFE2ATK=36
@@ -16,7 +17,7 @@ NO_MOVING_TARGETS=false
 ADV_MOTION_CHECK=false
  
 --------------------------------------------------
--- Alchemist automatic skills
+-- Alchemist automatic skills -- EXCLUDED FROM AI
 --------------------------------------------------
 -- Alche Auto Attacks: HP Range
 AAA_MinHP=100
